@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+ * It should be used as a base to create your own extension implementing the specific functionality
+ *  required for your installation, rather than being directly installed as an out-of-the-box solution
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Klevu\IndexingProducts\Service\AttributeIndexingRecordCreatorService">
+        <plugin name="Vendor_KlevuIndexingAttributeDefinitions::IndexingProducts_UpdateAttributeDefinitionPlugin"
+                type="Vendor\KlevuIndexingAttributeDefinitions\Plugin\IndexingProducts\Service\AttributeIndexingRecordCreatorService\UpdateAttributeDefinitionPlugin"/>
+    </type>
+
+</config>
