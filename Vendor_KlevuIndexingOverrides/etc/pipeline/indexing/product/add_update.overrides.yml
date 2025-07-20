@@ -1,0 +1,54 @@
+# This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+# It should be used as a base to create your own extension implementing the specific functionality
+#  required for your installation, rather than being directly installed as an out-of-the-box solution
+stages:
+  iterateIndexingRecordsBatch:
+    stages:
+      iterateIndexingRecords:
+        stages:
+          processProduct:
+            stages:
+              # Add more stages as required; we are intentionally only targeting a subset of types in this example
+              # variantProduct
+              # configurableProduct
+              # groupedProduct
+              # bundleProduct
+              virtualProduct:
+                stages:
+                  attributes:
+                    shortDescription:
+                      stages:
+                        generateData:
+                          stages:
+                            default:
+                              stages:
+                                getDefaultLanguageValue:
+                                  stages:
+                                    getData:
+                                      stages:
+                                        extract:
+                                          import: Vendor_KlevuIndexingOverrides::etc/pipeline/indexing/product/attributes/short_description/extract.yml
+                                      addStages:
+                                        after: validate
+                                        transform:
+                                          import: Vendor_KlevuIndexingOverrides::etc/pipeline/indexing/product/attributes/short_description/transform.yml
+              downloadableProduct:
+                stages:
+                  attributes:
+                    shortDescription:
+                      stages:
+                        generateData:
+                          stages:
+                            default:
+                              stages:
+                                getDefaultLanguageValue:
+                                  stages:
+                                    getData:
+                                      stages:
+                                        extract:
+                                          import: Vendor_KlevuIndexingOverrides::etc/pipeline/indexing/product/attributes/short_description/extract.yml
+                                      addStages:
+                                        after: validate
+                                        transform:
+                                          import: Vendor_KlevuIndexingOverrides::etc/pipeline/indexing/product/attributes/short_description/transform.yml
+              # default

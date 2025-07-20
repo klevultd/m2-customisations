@@ -1,0 +1,10 @@
+# This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+# It should be used as a base to create your own extension implementing the specific functionality
+#  required for your installation, rather than being directly installed as an out-of-the-box solution
+pipeline: Stage\Extract
+args:
+    extraction: currentProduct::getMetaDescription() # This is our change
+    transformations:
+        - StripTags(["p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "strong", "em", "ul", "ol", "li", "dl", "dt", "dd", "img", "sub", "sup", "small"], ["script"])
+        - EscapeHtml
+        - Trim
