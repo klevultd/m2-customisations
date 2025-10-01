@@ -1,0 +1,116 @@
+stages:
+  iterateIndexingRecordsBatch:
+    stages:
+      iterateIndexingRecords:
+        stages:
+          processProduct:
+            stages:
+              variantProduct:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              checkStock:
+                                stages:
+                                  getParentStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentParentProduct::isSalable()'
+                                  getVariantStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
+              configurableProduct:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              inStock:
+                                stages:
+                                  getStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
+              groupedProduct:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              inStock:
+                                stages:
+                                  getStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
+              bundleProduct:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              inStock:
+                                stages:
+                                  getStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
+              virtualProduct:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              inStock:
+                                stages:
+                                  getStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
+              downloadableProduct:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              inStock:
+                                stages:
+                                  getStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
+              default:
+                stages:
+                  generateRecord:
+                    stages:
+                      attributes:
+                        stages:
+                          inStock:
+                            stages:
+                              inStock:
+                                stages:
+                                  getStock:
+                                    pipeline: Stage\Extract
+                                    args:
+                                      extraction: 'currentProduct::isSalable()'
+                                      transformations: ToBoolean
