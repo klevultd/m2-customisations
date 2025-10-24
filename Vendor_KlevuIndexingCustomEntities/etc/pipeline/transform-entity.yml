@@ -1,0 +1,58 @@
+pipeline: Pipeline\CreateRecord
+stages:
+    id:
+        pipeline: Stage\Extract
+        args:
+            extraction: currentEntity::getEntityId()
+            transformations: Prepend("vendorcustomentityid_") # Ensure a single underscore is used until KS-25147 is addressed
+    type:
+        pipeline: Stage\StaticValue
+        args:
+            value: "VENDOR_CUSTOM_ENTITY"
+    attributes:
+        pipeline: Pipeline\CreateRecord
+        stages:
+            name:
+                pipeline: Pipeline\CreateRecord
+                stages:
+                    default:
+                        stages:
+                            -
+                                pipeline: Stage\Extract
+                                args:
+                                    extraction: currentEntity::getPostTitle()
+            description:
+                pipeline: Pipeline\CreateRecord
+                stages:
+                    default:
+                        stages:
+                            -
+                                pipeline: Stage\Extract
+                                args:
+                                    extraction: currentEntity::getPostContent()
+                                    transformations:
+                                        - Trim
+                                        - StripTags(null, ["script"])
+                                        - EscapeHtml
+            url:
+                stages:
+                    -
+                        pipeline: Stage\Extract
+                        args:
+                            extraction: currentEntity::getHandle()
+                            transformations:
+                                - Prepend($store::getForCurrentStore().base_url, "custom-entity/")
+            visibility:
+                stages:
+                    -
+                        pipeline: Stage\StaticValue
+                        args:
+                            value: ["search"]
+            createdAt:
+                stages:
+                    getCreatedAt:
+                        pipeline: Stage\Extract
+                        args:
+                            extraction: currentEntity::getPublishedAt()
+                            transformations:
+                                - ToDateString("Y-m-d\TH:i:s.v\Z")

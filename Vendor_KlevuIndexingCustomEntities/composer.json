@@ -1,0 +1,34 @@
+{
+    "name": "vendor/klevu-indexing-custom-entities",
+    "description": "Demonstration module sending custom entity data to Klevu during product indexing",
+    "type": "magento2-module",
+    "version": "0.0.1",
+    "require": {
+        "php": "~8.1.0|~8.2.0|~8.3.0|~8.4.0",
+        "magento/framework": "@stable",
+        "magento/module-cms": "@stable",
+        "magento/module-store": "@stable",
+        "klevu/module-m2-configuration": "^1.0.0",
+        "klevu/module-m2-indexing": "^3.0.0",
+        "klevu/module-m2-indexing-api": "^3.0.0",
+        "klevu/php-pipelines": "^1.1.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Vendor\\KlevuIndexingCustomEntities\\": ""
+        }
+    },
+    "license": [
+        "MIT"
+    ],
+    "authors": [
+        {
+            "name": "Klevu Oy",
+            "email": "contact@klevu.com",
+            "homepage": "https://www.klevu.com/"
+        }
+    ]
+}

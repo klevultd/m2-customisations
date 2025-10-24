@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+ * It should be used as a base to create your own extension implementing the specific functionality
+ *  required for your installation, rather than being directly installed as an out-of-the-box solution
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <vendor>
+            <klevu_indexing_custom_entities>
+                <sync_enabled>1</sync_enabled>
+            </klevu_indexing_custom_entities>
+        </vendor>
+    </default>
+</config>

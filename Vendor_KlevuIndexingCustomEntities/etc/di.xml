@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+ * It should be used as a base to create your own extension implementing the specific functionality
+ *  required for your installation, rather than being directly installed as an out-of-the-box solution
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Vendor\KlevuIndexingCustomEntities\Api\Data\CustomEntityInterface"
+                type="Vendor\KlevuIndexingCustomEntities\Model\CustomEntity" />
+
+    <!-- Service to determine whether sync should take place for this entity type -->
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\SyncEnabledProvider"
+                 type="Klevu\Configuration\Service\Provider\ScopeConfigProvider">
+        <arguments>
+            <argument name="path" xsi:type="string">vendor/klevu_indexing_custom_entities/sync_enabled</argument>
+            <argument name="returnType"
+                      xsi:type="const">Klevu\Configuration\Service\Provider\ScopeConfigProvider::TYPE_BOOLEAN</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Service responsible for providing custom entity objects -->
+    <type name="Vendor\KlevuIndexingCustomEntities\Service\Provider\CustomEntityProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">Klevu\Indexing\Logger\Logger</argument>
+            <argument name="syncEnabledProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\SyncEnabledProvider</argument>
+            <argument name="batchSize" xsi:type="const">Klevu\Indexing\Constants::DEFAULT_INDEXING_BATCH_SIZE</argument>
+            <argument name="batchSizeValidator" xsi:type="object">Klevu\Indexing\Validator\BatchSizeValidator</argument>
+        </arguments>
+    </type>
+
+    <!-- Services responsible for providing custom entity objects -->
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\CustomEntityProvider\Batched"
+                 type="Vendor\KlevuIndexingCustomEntities\Service\Provider\CustomEntityProvider" />
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityProviderProvider"
+                 type="Klevu\Indexing\Service\Provider\EntityProviderProvider">
+        <arguments>
+            <argument name="entityProviders" xsi:type="array">
+                <item name="vendor_custom_entity"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\CustomEntityProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityProviderProvider\Batched"
+                 type="Klevu\Indexing\Service\Provider\EntityProviderProvider">
+        <arguments>
+            <argument name="entityProviders" xsi:type="array">
+                <item name="vendor_custom_entity"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\CustomEntityProvider\Batched</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Composed virtualType holding conditions to determine if entity is indexable -->
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Determiner\IsIndexableDeterminer"
+                 type="Klevu\Indexing\Service\Determiner\IsIndexableDeterminer">
+        <arguments>
+            <argument name="isIndexableConditions" xsi:type="array">
+                <!-- Here you can add conditions covering entity status, published date, etc -->
+                <item name="exampleIsIndexableCondition"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Determiner\ExampleIsIndexableCondition</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Services responsible for entity discovery -->
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityDiscoveryProvider\Batched"
+                 type="Klevu\Indexing\Service\Provider\EntityDiscoveryProvider">
+        <arguments>
+            <argument name="entityType" xsi:type="string">VENDOR_CUSTOM_ENTITY</argument>
+            <argument name="entityProviderProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityProviderProvider\Batched</argument>
+            <argument name="isIndexableDeterminer"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Determiner\IsIndexableDeterminer</argument>
+            <!-- If a custom entity can be excluded at a store level, we need this to be true -->
+            <argument name="isCheckIsIndexableAtStoreScope" xsi:type="boolean">false</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityDiscoveryProvider"
+                 type="Klevu\Indexing\Service\Provider\EntityDiscoveryProvider">
+        <arguments>
+            <argument name="entityType" xsi:type="string">VENDOR_CUSTOM_ENTITY</argument>
+            <argument name="entityProviderProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityProviderProvider</argument>
+            <argument name="isIndexableDeterminer"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Determiner\IsIndexableDeterminer</argument>
+            <!-- If a custom entity can be excluded at a store level, we need this to be true -->
+            <argument name="isCheckIsIndexableAtStoreScope" xsi:type="boolean">true</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Klevu\Indexing\Service\EntityDiscoveryOrchestratorService">
+        <arguments>
+            <argument name="discoveryProviders" xsi:type="array">
+                <item name="VENDOR_CUSTOM_ENTITY"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityDiscoveryProvider\Batched</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- We inject our discovery services into the core filters -->
+    <type name="Klevu\Indexing\Service\FilterEntitiesToDeleteService">
+        <arguments>
+            <argument name="discoveryProviders" xsi:type="array">
+                <item name="VENDOR_CUSTOM_ENTITY"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityDiscoveryProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Klevu\Indexing\Service\FilterEntitiesToSetToIndexableService">
+        <arguments>
+            <argument name="discoveryProviders" xsi:type="array">
+                <item name="VENDOR_CUSTOM_ENTITY"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityDiscoveryProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Klevu\Indexing\Service\FilterEntitiesToSetToNotIndexableService">
+        <arguments>
+            <argument name="discoveryProviders" xsi:type="array">
+                <item name="VENDOR_CUSTOM_ENTITY"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityDiscoveryProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Providers for entity indexing provision per action -->
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider"
+                 type="Klevu\Indexing\Service\Provider\Sync\EntityIndexingRecordProvider">
+        <arguments>
+            <argument name="entityProviderProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\EntityProviderProvider</argument>
+            <argument name="indexingRecordCreatorService"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\EntityIndexingRecordCreatorService</argument>
+            <argument name="entityType" xsi:type="string">VENDOR_CUSTOM_ENTITY</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider\Add"
+                 type="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider">
+        <arguments>
+            <argument name="action" xsi:type="string">Add</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider\Update"
+                 type="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider">
+        <arguments>
+            <argument name="action" xsi:type="string">Update</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider\Delete"
+                 type="Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider">
+        <arguments>
+            <argument name="action" xsi:type="string">Delete</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Map our pipeline configuration files per entity::action -->
+    <type name="Klevu\PlatformPipelines\Service\Provider\PipelineConfigurationProvider">
+        <arguments>
+            <argument name="pipelineConfigurationFilepaths" xsi:type="array">
+                <item name="VENDOR_CUSTOM_ENTITY::add" xsi:type="string">Vendor_KlevuIndexingCustomEntities::etc/pipeline/add_update.yml</item>
+                <item name="VENDOR_CUSTOM_ENTITY::delete" xsi:type="string">Vendor_KlevuIndexingCustomEntities::etc/pipeline/delete.yml</item>
+                <item name="VENDOR_CUSTOM_ENTITY::update" xsi:type="string">Vendor_KlevuIndexingCustomEntities::etc/pipeline/add_update.yml</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Create entity indexers using our pipeline configuration -->
+    <!-- Note: we don't need to worry about dynamically generating configuration overrides, so this is excluded -->
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\EntityIndexerService\Add"
+                 type="Klevu\Indexing\Service\EntityIndexerService">
+        <arguments>
+            <argument name="entityIndexingRecordProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider\Add</argument>
+            <argument name="pipelineIdentifier" xsi:type="string">VENDOR_CUSTOM_ENTITY::add</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\EntityIndexerService\Delete"
+                 type="Klevu\Indexing\Service\EntityIndexerService">
+        <arguments>
+            <argument name="entityIndexingRecordProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider\Delete</argument>
+            <argument name="pipelineIdentifier" xsi:type="string">VENDOR_CUSTOM_ENTITY::delete</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Vendor\KlevuIndexingCustomEntities\Service\EntityIndexerService\Update"
+                 type="Klevu\Indexing\Service\EntityIndexerService">
+        <arguments>
+            <argument name="entityIndexingRecordProvider"
+                      xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\Provider\Sync\EntityIndexingRecordProvider\Update</argument>
+            <argument name="pipelineIdentifier" xsi:type="string">VENDOR_CUSTOM_ENTITY::update</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Register our entity indexer services for all actions with Klevu's orchestrator -->
+    <type name="Klevu\Indexing\Service\EntitySyncOrchestratorService">
+        <arguments>
+            <argument name="entityIndexerServices" xsi:type="array">
+                <item name="VENDOR_CUSTOM_ENTITY" xsi:type="array">
+                    <item name="delete"
+                          sortOrder="10"
+                          xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\EntityIndexerService\Delete</item>
+                    <item name="update"
+                          sortOrder="20"
+                          xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\EntityIndexerService\Update</item>
+                    <item name="add"
+                          sortOrder="30"
+                          xsi:type="object">Vendor\KlevuIndexingCustomEntities\Service\EntityIndexerService\Add</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!--
+        Observers and Plugins will need to be configured to respond to CRUD events
+            and avoid needing to trigger
+            bin/magento k:i:entity-d -vvv - -entity-types VENDOR_CUSTOM_ENTITY
+            bin/magento k:i:entity-u -vvv - -entity-types VENDOR_CUSTOM_ENTITY - -entity-ids all
+    -->
+</config>

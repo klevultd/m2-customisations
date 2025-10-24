@@ -1,0 +1,61 @@
+stages:
+    logStart:
+        pipeline: Indexing\Stage\Log
+        args:
+            message: "Start Add/Update Vendor Custom Entity Pipeline"
+    iterateIndexingRecordsBatch:
+        pipeline: Pipeline\Iterate # LOOP OVER ALL PROVIDED BATCHES
+        args:
+            continueOnException: ~
+        stages:
+            iterateEntities:
+                pipeline: Pipeline\Iterate
+                args:
+                    continueOnException: ~
+                stages:
+                    processIndexingRecordStart:
+                        stages:
+                            registerIndexingRecordToContext:
+                                pipeline: Stage\RegisterContext
+                                args:
+                                    contextKey: "currentIndexingRecord"
+                            registerEntityToContext:
+                                stages:
+                                    extractCategory:
+                                        pipeline: Stage\Extract
+                                        args:
+                                            extraction: currentIndexingRecord::getEntity()
+                                    registerCategory:
+                                        pipeline: Stage\RegisterContext
+                                        args:
+                                            contextKey: "currentEntity"
+                            registerActionToContext:
+                                stages:
+                                    extractAction:
+                                        pipeline: Stage\Extract
+                                        args:
+                                            extraction: currentIndexingRecord::getAction()
+                                    registerAction:
+                                        pipeline: Stage\RegisterContext
+                                        args:
+                                            contextKey: "currentAction"
+                            registerEntityTypeToContext:
+                                stages:
+                                    createEntityType:
+                                        pipeline: Stage\StaticValue
+                                        args:
+                                            value: "VENDOR_CUSTOM_ENTITY"
+                                    registerEntityType:
+                                        pipeline: Stage\RegisterContext
+                                        args:
+                                            contextKey: "currentEntityType"
+                    processEntity:
+                        stages:
+                            createRecord:
+                                import: transform-entity.yml
+            processPayload:
+                import: Klevu_Indexing::etc/pipeline/process-batch-payload.yml
+    logEnd:
+        pipeline: Indexing\Stage\Log
+        args:
+            message: "End Add/Update Vendor Custom Entity Pipeline"

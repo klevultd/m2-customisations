@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+ * It should be used as a base to create your own extension implementing the specific functionality
+ *  required for your installation, rather than being directly installed as an out-of-the-box solution
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Vendor_KlevuIndexingCustomEntities">
+        <sequence>
+            <module name="Klevu_Configuration"/>
+            <module name="Klevu_Indexing"/>
+            <module name="Klevu_IndexingApi"/>
+            <module name="Klevu_Pipelines"/>
+            <module name="Magento_Framework"/>
+            <module name="Magento_Cms"/> <!-- for \Klevu\IndexingApi\Service\EntityIndexingRecordCreatorServiceInterface -->
+            <module name="Magento_Store"/>
+        </sequence>
+    </module>
+</config>
