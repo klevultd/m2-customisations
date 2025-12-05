@@ -1,0 +1,19 @@
+stages:
+    iterateIndexingRecordsBatch:
+        stages:
+            iterateCategories:
+                stages:
+                    processCategory:
+                        stages:
+                            createRecord:
+                                stages:
+                                    attributes:
+                                        addStages:
+                                            cat__vendor_custom_category_attribute:
+                                                stages:
+                                                    extract:
+                                                        pipeline: Stage\Extract
+                                                        args:
+                                                            extraction: currentCategory::getVendorCustomCategoryAttribute()
+                                                            transformations:
+                                                                - ToFloat

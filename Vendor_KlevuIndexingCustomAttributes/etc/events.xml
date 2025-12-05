@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright © Klevu Oy. All rights reserved. See LICENSE.txt for license details. -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <!-- Requires Klevu v4.4.0 and above -->
+    <event name="klevu_indexing_entityrecordprovider_aftergetentities">
+        <observer name="Vendor_KlevuIndexingCustomAttributes_addCustomEntityData"
+                  instance="Vendor\KlevuIndexingCustomAttributes\Observer\Indexing\Service\Provider\Sync\EntityIndexingRecordProvider\AddCustomEntityDataObserver"/>
+    </event>
+
+</config>

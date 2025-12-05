@@ -1,0 +1,77 @@
+stages:
+    iterateIndexingRecordsBatch:
+        stages:
+            iterateIndexingRecords:
+                stages:
+                    processProduct:
+                        stages:
+                            variantProduct:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml
+                            configurableProduct:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml
+                            groupedProduct:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml
+                            bundleProduct:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml
+                            virtualProduct:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml
+                            downloadableProduct:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml
+                            default:
+                                stages:
+                                    generateRecord:
+                                        stages:
+                                            attributes:
+                                                addStages:
+                                                    vendor_custom_product_attribute_from_transformer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_transformer.yml
+                                                    vendor_custom_product_attribute_from_observer:
+                                                        import: Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/attributes/vendor_custom_product_attribute_from_observer.yml

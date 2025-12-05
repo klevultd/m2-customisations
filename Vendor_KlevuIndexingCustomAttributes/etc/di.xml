@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * This is a demonstration module provided by Klevu with no guarantees, active support, or planned updates
+ * It should be used as a base to create your own extension implementing the specific functionality
+ *  required for your installation, rather than being directly installed as an out-of-the-box solution
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Register attributes for discovery and sync -->
+    <type name="Klevu\IndexingProducts\Service\Provider\StaticAttributeProvider">
+        <arguments>
+            <argument name="attributes" xsi:type="array">
+                <item name="vendor_custom_product_attribute_from_transformer" xsi:type="array">
+                    <item name="attribute_id" xsi:type="number">100001</item>
+                    <item name="attribute_code" xsi:type="string">vendor_custom_product_attribute_from_transformer</item>
+                    <item name="is_searchable" xsi:type="boolean">true</item>
+                    <item name="is_returnable" xsi:type="boolean">true</item>
+                    <item name="frontend_input" xsi:type="string">text</item>
+                    <item name="backend_type" xsi:type="string">varchar</item>
+                    <item name="is_global" xsi:type="number">0</item>
+                </item>
+
+                <item name="vendor_custom_product_attribute_from_observer" xsi:type="array">
+                    <item name="attribute_id" xsi:type="number">100002</item>
+                    <item name="attribute_code" xsi:type="string">vendor_custom_product_attribute_from_observer</item>
+                    <item name="is_searchable" xsi:type="boolean">true</item>
+                    <item name="is_returnable" xsi:type="boolean">true</item>
+                    <item name="frontend_input" xsi:type="string">text</item>
+                    <item name="backend_type" xsi:type="string">varchar</item>
+                    <item name="is_global" xsi:type="number">0</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Klevu\IndexingCategories\Service\Provider\StaticAttributeProvider">
+        <arguments>
+            <argument name="attributes" xsi:type="array">
+                <item name="vendor_custom_category_attribute" xsi:type="array">
+                    <item name="attribute_id" xsi:type="number">100011</item>
+                    <item name="attribute_code" xsi:type="string">vendor_custom_category_attribute</item>
+                    <item name="is_searchable" xsi:type="boolean">true</item>
+                    <item name="is_filterable" xsi:type="boolean">true</item>
+                    <item name="labels" xsi:type="array">
+                        <item name="1" xsi:type="string">Custom Category Attribute (Klevu Demo)</item>
+                    </item>
+                    <item name="frontend_input" xsi:type="string">text</item> <!-- Requires Klevu v4.4.0 and above -->
+                    <item name="backend_type" xsi:type="string">decimal</item> <!-- Requires Klevu v4.4.0 and above -->
+                    <item name="is_global" xsi:type="number">1</item> <!-- Requires Klevu v4.4.0 and above -->
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Add Custom Mapping for Data Type -->
+    <type name="Klevu\Indexing\Service\Mapper\AttributeTypeMapperService">
+        <arguments>
+            <argument name="customMapping" xsi:type="array">
+                <item name="vendor_custom_product_attribute_from_observer" xsi:type="string">NUMBER</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Add providers for entity data -->
+    <type name="Vendor\KlevuIndexingCustomAttributes\Observer\Indexing\Service\Provider\Sync\EntityIndexingRecordProvider\AddCustomEntityDataObserver">
+        <arguments>
+            <argument name="addCustomDataToEntityActions" xsi:type="array">
+                <item name="KLEVU_PRODUCT"
+                      xsi:type="object">Vendor\KlevuIndexingCustomAttributes\Service\Action\AddCustomDataToProduct</item>
+                <item name="KLEVU_CATEGORY"
+                      xsi:type="object">Vendor\KlevuIndexingCustomAttributes\Service\Action\AddCustomDataToCategory</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Klevu\PlatformPipelines\ObjectManager\TransformerManager">
+        <arguments>
+            <argument name="namespaces" xsi:type="array">
+                <item name="Vendor\KlevuIndexingCustomAttributes\Pipeline\Transformer"
+                      xsi:type="const">Klevu\Pipelines\ObjectManager\ObjectManagerInterface::PRIORITY_NAMESPACE_SORT_ORDER</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Vendor\KlevuIndexingCustomAttributes\Pipeline\Provider\Argument\Transformer\GetVendorCustomProductAttributeArgumentProvider">
+        <arguments>
+            <argument name="argumentProvider" xsi:type="object">Klevu\Pipelines\Provider\ArgumentProvider</argument>
+        </arguments>
+    </type>
+
+    <!-- Configure pipelines to include our data -->
+    <virtualType name="Klevu\IndexingProducts\Service\Provider\PipelineConfigurationOverridesFilepathsProvider\Add">
+        <arguments>
+            <argument name="pipelineConfigurationOverrideFilepaths" xsi:type="array">
+                <item name="vendor_klevuindexingcustomattributes_indexing_product_add_update"
+                      xsi:type="string">Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/add_update.overrides.yml</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Klevu\IndexingProducts\Service\Provider\PipelineConfigurationOverridesFilepathsProvider\Update">
+        <arguments>
+            <argument name="pipelineConfigurationOverrideFilepaths" xsi:type="array">
+                <item name="vendor_klevuindexingcustomattributes_indexing_product_add_update"
+                      xsi:type="string">Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/product/add_update.overrides.yml</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Klevu\IndexingCategories\Service\Provider\PipelineConfigurationOverridesFilepathsProvider\Add">
+        <arguments>
+            <argument name="pipelineConfigurationOverrideFilepaths" xsi:type="array">
+                <item name="vendor_klevuindexingcustomattributes_indexing_category_add_update"
+                      xsi:type="string">Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/category/add_update.overrides.yml</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Klevu\IndexingCategories\Service\Provider\PipelineConfigurationOverridesFilepathsProvider\Update">
+        <arguments>
+            <argument name="pipelineConfigurationOverrideFilepaths" xsi:type="array">
+                <item name="vendor_klevuindexingcustomattributes_indexing_category_add_update"
+                      xsi:type="string">Vendor_KlevuIndexingCustomAttributes::etc/pipeline/indexing/category/add_update.overrides.yml</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>

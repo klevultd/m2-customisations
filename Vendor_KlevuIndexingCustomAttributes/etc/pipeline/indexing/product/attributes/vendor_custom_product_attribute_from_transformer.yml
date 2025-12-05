@@ -1,0 +1,11 @@
+stages:
+    extract:
+        pipeline: Stage\Extract
+        args:
+            extraction: currentProduct::
+            transformations:
+                - GetVendorCustomProductAttribute($store::getForCurrentStore().store_id)
+                - ToString
+                - StripTags(["p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "strong", "em", "ul", "ol", "li", "dl", "dt", "dd", "img", "sub", "sup", "small"], ["script"])
+                - EscapeHtml
+                - Trim
